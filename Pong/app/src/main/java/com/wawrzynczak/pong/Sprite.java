@@ -246,6 +246,9 @@ public class Sprite
         setyPosition(canvasHeight / 2 - getHeight() / 2);
     }
 
+    public void stop() {
+        this.velocity = new Velocity(0,0);
+    }
     public boolean IsMaximumRight(int canvasWidth)
     {
         return getxPosition() >= (canvasWidth - getWidth());

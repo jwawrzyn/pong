@@ -16,18 +16,21 @@ public class GameState {
     int screenWidth = 300;
     int screenHeight = 420;
 
-    Ball gameBall;
-    Sprite topPaddle;
-    AIPaddle bottomPaddle;
-    VelocityGenerator velocityGenerator;
-    Score score;
+    private Ball gameBall;
+    private Sprite topPaddle;
+    private AIPaddle bottomPaddle;
+    private VelocityGenerator velocityGenerator;
+    private Score score;
 
-    private double delayTime  = 0;
+    private double delayTime  = 2;
+    private boolean finished = false;
 
     public GameState()
     {
     }
 
+    public Score getScore() { return score; }
+    public boolean getFinished() { return finished; }
     public double getDelayTime() {
         double delay = delayTime;
         delayTime = 0;
@@ -42,7 +45,7 @@ public class GameState {
         gameBall = new Ball(screenWidth, screenHeight, velocityGenerator);
         topPaddle = new Sprite(screenWidth, screenHeight);
         bottomPaddle = new AIPaddle(screenWidth, screenHeight, gameBall);
-        score = new Score(9);
+        score = new Score(3);
         InitializeGameState();
         Log.i("Pong - GameState", "Initialized GameState");
     }
@@ -85,9 +88,8 @@ public class GameState {
         }
     }
 
-    public boolean CheckBallBounds(double frameTime)
+    public void  CheckBallBounds(double frameTime)
     {
-        boolean finished = false;
         if (gameBall.IsOutOfXBounds(frameTime))
         {
             gameBall.reverseXVelocity();
@@ -120,7 +122,6 @@ public class GameState {
             }
         }
 
-        return finished;
     }
 
     private void Scored(Velocity newBallVelocity)
@@ -185,18 +186,26 @@ public class GameState {
     //the draw method
     public void draw(Canvas canvas, Paint paint) {
 
-    //Clear the screen
+        //Clear the screen
         canvas.drawRGB(20, 20, 20);
 
-    //set the colour
+        //set the colour
         paint.setARGB(200, 0, 200, 0);
 
-    //draw the ball
+        //draw the ball
         gameBall.draw(canvas, paint);
 
-    //draw the bats
+        //draw the bats
         topPaddle.draw(canvas, paint);
         bottomPaddle.draw(canvas, paint);
 
+    }
+
+    public void ResetGame(){
+        this.gameBall.center();
+        this.bottomPaddle.centerHorizontal();
+        this.topPaddle.centerHorizontal();
+        delayTime = 0;
+        finished = false;
     }
 }

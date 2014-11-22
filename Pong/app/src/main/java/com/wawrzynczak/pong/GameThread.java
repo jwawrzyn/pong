@@ -18,8 +18,7 @@ public class GameThread extends Thread {
 
     /** Handle to the surface manager object we interact with */
     private SurfaceHolder surfaceHolder;
-    private Paint _paint;
-    private GameState _state;
+    private GameState state;
     private Handler mHandler;
     private int canvasWidth;
     private int canvasHeight;
@@ -28,15 +27,19 @@ public class GameThread extends Thread {
     private boolean isRunning;
     private double frameTime;
     private double delayTime = 0;
+    private int currentState;
+
+    public static final int STATE_PAUSE = 2;
+    public static final int STATE_RUNNING_1P = 1;
 
     public GameThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
     {
         this.surfaceHolder = surfaceHolder;
-        _paint = new Paint();
+
         mHandler = handler;
 
-        _state = new GameState(canvasWidth, canvasHeight);
-        score = _state.score;
+        state = new GameState(canvasWidth, canvasHeight);
+        score = state.getScore();
         Log.i("Pong - GameThread","Size: " + canvasWidth + " by " + canvasHeight);
 
     }
@@ -50,37 +53,47 @@ public class GameThread extends Thread {
         mHandler.sendMessage(msg);
     }
 
+    public void setState(int state)
+    {
+        this.currentState = state;
+    }
+
     @Override
     public void run() {
         long startTime = SystemClock.uptimeMillis();
+        boolean finished = false;
         while (isRunning)
         {
             Canvas canvas = null;
             try
             {
-                long currentTime = SystemClock.uptimeMillis();
-                frameTime = (currentTime - startTime) / 1000.0;
-                startTime = currentTime;
+                if (currentState == STATE_RUNNING_1P) {
+                    long currentTime = SystemClock.uptimeMillis();
+                    frameTime = (currentTime - startTime) / 1000.0;
+                    startTime = currentTime;
 
-                canvas = surfaceHolder.lockCanvas(null);
-                synchronized (surfaceHolder)
-                {
-                    if ( delayTime <= 0)
-                    {
-                        _state.CheckCollision(frameTime);
-                        _state.CheckBallBounds(frameTime);
-                        //_state.AdjustPaddles();
-                        _state.AdvanceBall(frameTime);
-                        delayTime = _state.getDelayTime();
+                    canvas = surfaceHolder.lockCanvas(null);
+                    synchronized (surfaceHolder) {
+                        if (delayTime <= 0) {
+                            state.CheckCollision(frameTime);
+                            state.CheckBallBounds(frameTime);
+                            //state.AdjustPaddles();
+                            state.AdvanceBall(frameTime);
+                            delayTime = state.getDelayTime();
+                        }
+
+                        if (delayTime > 0)
+                            delayTime = delayTime - frameTime;
+                        score = state.getScore();
+                        DrawScoreBoard();
+                        //doDraw(canvas);
+                        Paint paint = new Paint();
+                        if (state.getFinished())
+                        {
+                            FinishGame();
+                        }
+                        state.draw(canvas, paint);
                     }
-
-                    if (delayTime > 0)
-                        delayTime = delayTime - frameTime;
-                    score = _state.score;
-                    DrawScoreBoard();
-                    //doDraw(canvas);
-                    Paint paint = new Paint();
-                    _state.draw(canvas,paint);
                 }
             }
             finally
@@ -95,7 +108,7 @@ public class GameThread extends Thread {
 
     public GameState getGameState()
     {
-        return _state;
+        return state;
     }
 
     public void setRunning(boolean isRunning)
@@ -103,15 +116,15 @@ public class GameThread extends Thread {
         this.isRunning = isRunning;
     }
 
-    /*public void doStart0p()
+    public void doStart0p()
     {
         synchronized (surfaceHolder)
         {
-            previousState = STATE_RUNNING_0P;
-            setState(STATE_RUNNING_0P);
-            ResetGame();
+            //previousState = STATE_PAUSE;
+            setState(STATE_RUNNING_1P);
+            //ResetGame();
         }
-    }*/
+    }
 
     public void setSurfaceSize(int width, int height)
     {
@@ -119,7 +132,8 @@ public class GameThread extends Thread {
         {
             canvasWidth = width;
             canvasHeight = height;
-            _state = new GameState(width, height);
+            state = new GameState(width, height);
+            doStart0p();
             //backgroundImage = Bitmap.createScaledBitmap(backgroundImage, width, height, true);
             //ball.canvasChanges(width, height);
             //battBottom.canvasChanges(width, height);
@@ -139,6 +153,17 @@ public class GameThread extends Thread {
         b.putInt("viz", View.VISIBLE);
         msg.setData(b);
         mHandler.sendMessage(msg);
+    }
+
+    private void FinishGame()
+    {
+        setState(STATE_PAUSE);
+        DrawScoreBoard();
+    }
+
+    private void ResetGame()
+    {
+        state.ResetGame();
     }
 
 }

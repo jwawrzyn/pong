@@ -22,12 +22,18 @@ public class AIPaddle extends Sprite {
     {
         this.ball = newBall;
         if (ball.velocity.yVelocity < 0)
-            this.centerHorizontal();
+            //this.centerHorizontal();
+            this.stop();
         else
         {
             double velocityDiff = Math.abs(ball.velocity.xVelocity) - Math.abs(velocity.xVelocity);
             double ballXVelocity = ball.velocity.xVelocity;
             double xVelocity = velocity.xVelocity;
+
+            if (xVelocity == 0.0 ){
+                this.velocity = VelocityGenerator.GenerateRandomHorizontalVelocity();
+            }
+
             if (Math.abs(velocityDiff) / Math.abs(velocity.xVelocity) > .20)
             {
                 if (Math.abs(ballXVelocity) - Math.abs(xVelocity) > 0 )
