@@ -58,8 +58,16 @@ public class VelocityGenerator
 
     public static Velocity GenerateRandomHorizontalVelocity()
     {
-        Random randomizer = new Random(12313975);
-        return new Velocity( randomizer.nextInt(MaxSpeed), 0 );
+        Random randomizer = new Random();
+        boolean foundNum = false;
+        int randomNum = 0;
+
+        while (!foundNum) {
+            randomNum = randomizer.nextInt(MaxSpeed);
+            if (randomNum > MinimumXSpeed)
+                foundNum = true;
+        }
+        return new Velocity( randomNum, 0 );
     }
     public static Velocity SpeedUpVelocity( Velocity old)
     {

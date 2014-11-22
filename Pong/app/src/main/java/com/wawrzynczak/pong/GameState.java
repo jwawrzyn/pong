@@ -205,7 +205,8 @@ public class GameState {
         this.gameBall.center();
         this.bottomPaddle.centerHorizontal();
         this.topPaddle.centerHorizontal();
-        delayTime = 0;
+        delayTime = 2;
         finished = false;
+        score = new Score(3);
     }
 }

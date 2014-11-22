@@ -28,9 +28,9 @@ public class GameThread extends Thread {
     private double frameTime;
     private double delayTime = 0;
     private int currentState;
+    private int previousState;
 
-    public static final int STATE_PAUSE = 2;
-    public static final int STATE_RUNNING_1P = 1;
+
 
     public GameThread(SurfaceHolder surfaceHolder, Context context, Handler handler)
     {
@@ -67,7 +67,7 @@ public class GameThread extends Thread {
             Canvas canvas = null;
             try
             {
-                if (currentState == STATE_RUNNING_1P) {
+                if (currentState == Constants.STATE_RUNNING_1P) {
                     long currentTime = SystemClock.uptimeMillis();
                     frameTime = (currentTime - startTime) / 1000.0;
                     startTime = currentTime;
@@ -116,12 +116,19 @@ public class GameThread extends Thread {
         this.isRunning = isRunning;
     }
 
+    public void doStart1P() {
+        synchronized (surfaceHolder) {
+            previousState = Constants.STATE_RUNNING_1P;
+            setState(Constants.STATE_RUNNING_1P);
+            //ResetGame();
+        }
+    }
     public void doStart0p()
     {
         synchronized (surfaceHolder)
         {
-            //previousState = STATE_PAUSE;
-            setState(STATE_RUNNING_1P);
+            previousState = Constants.STATE_RUNNING_1P;
+            setState(Constants.STATE_RUNNING_1P);
             //ResetGame();
         }
     }
@@ -142,11 +149,18 @@ public class GameThread extends Thread {
             //SetInitialBattPosition();
         }
     }
-    private void DrawScoreBoard()
+    private void DrawScoreBoard() {
+        DrawScoreBoard(false);
+    }
+    private void DrawScoreBoard(boolean finished)
     {
         Message msg = mHandler.obtainMessage();
         Bundle b = new Bundle();
-        String scoreBoard = score.CreateScoreBoard();
+        String scoreBoard;
+        if (finished)
+            scoreBoard = score.CreateWinnerBoard();
+        else
+            scoreBoard = score.CreateScoreBoard();
         //if (shouldDiagnosticInformation)
         //    scoreBoard += " FPS: " + (int) (1 / frameTime);
         b.putString("text", scoreBoard);
@@ -157,13 +171,33 @@ public class GameThread extends Thread {
 
     private void FinishGame()
     {
-        setState(STATE_PAUSE);
-        DrawScoreBoard();
+        setState(Constants.STATE_PAUSE);
+        DrawScoreBoard(true);
+        state.ResetGame();
     }
 
     private void ResetGame()
     {
         state.ResetGame();
+    }
+
+    public void pause()
+    {
+        synchronized (surfaceHolder)
+        {
+            setState(Constants.STATE_PAUSE);
+        }
+    }
+
+    public void unpause()
+    {
+        synchronized (surfaceHolder)
+        {
+            if (currentState == Constants.STATE_PAUSE)
+            {
+                setState(previousState);
+            }
+        }
     }
 
 }
