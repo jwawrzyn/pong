@@ -16,5 +16,9 @@ public class Constants {
     public static final int MENU_RESUME = 5;
     public static final int MENU_SOUND_ON = 6;
     public static final int MENU_SHOWINFO = 7;
+    public static final int MENU_PREFERENCES = 8;
+
+    //
+    public static final int RESULT_PREFERENCES = 1;
 
 }

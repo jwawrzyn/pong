@@ -9,13 +9,18 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.wawrzynczak.pong.MainActivity"
-            android:label="@string/app_name">
-            <!--android:screenOrientation="landscape"-->
+            android:label="@string/app_name" >
+
+            <!-- android:screenOrientation="landscape" -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.wawrzynczak.pong.PreferencesActivity"
+            android:label="@string/title_activity_preferences" >
         </activity>
     </application>
 

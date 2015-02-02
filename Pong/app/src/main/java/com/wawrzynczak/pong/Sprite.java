@@ -295,6 +295,9 @@ public class Sprite
         this.velocity = VelocityGenerator.SlowDownVelocity(velocity);
     }
 
+    public void changeDirection() {
+        this.velocity = new Velocity((-1 * this.velocity.xVelocity), this.velocity.yVelocity);
+    }
     public void changeVelocity(double percentage) {
         this.velocity = VelocityGenerator.changeVelocity(velocity, percentage);
     }

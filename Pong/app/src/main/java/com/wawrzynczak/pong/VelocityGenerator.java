@@ -107,12 +107,15 @@ public class VelocityGenerator
         double yVelocity = old.yVelocity;
         int newX = (int)(xVelocity* percentage);
         int newY = (int)(yVelocity * percentage);
+        int direction = 1;
+        if (newX != 0)
+            direction= newX / Math.abs(newX);
 
         if (Math.abs(newX) > MaxSpeed)
-            newX = MaxSpeed;
+            newX = MaxSpeed * direction;
 
         if (Math.abs(newY) > MaxSpeed)
-            newY = MaxSpeed;
+            newY = MaxSpeed * direction;
 
         return new Velocity(newX, newY);
     }

@@ -73,6 +73,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         return gameThread.getGameState().touchEvent(event);
     }
 
+    public void movePlayerPaddle( int direction, float percentage)
+    {
+        gameThread.movePlayerPaddle(direction, percentage);
+    }
     //implemented as part of the SurfaceHolder.Callback interface
     @Override
     public void surfaceChanged(SurfaceHolder older, int format, int width, int height) {

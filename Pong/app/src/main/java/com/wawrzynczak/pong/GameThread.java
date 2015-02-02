@@ -200,4 +200,8 @@ public class GameThread extends Thread {
         }
     }
 
+    public void movePlayerPaddle(int direction, float percentage)
+    {
+        state.movePlayerPaddle(direction, percentage);
+    }
 }

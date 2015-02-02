@@ -152,6 +152,36 @@ public class GameState {
             paddle.setVelocity(new Velocity(-130, 0));
     }
 
+    public void movePlayerPaddle(int direction, float percentage)
+    {
+        if (topPaddle.velocity.xVelocity == 0)
+            topPaddle.velocity = new Velocity(150,0);
+        double currentVelocity = topPaddle.velocity.xVelocity;
+        int currentDirection = (int)( currentVelocity / Math.abs(currentVelocity));
+        if (currentDirection != direction)
+        {
+            topPaddle.changeDirection();
+        }
+
+        /* if (direction == 1 && topPaddle.velocity.xVelocity < 0)
+        {
+            topPaddle.changeDirection();
+        }
+        else if (direction == -1 && topPaddle.velocity.xVelocity > 0)
+        {
+            topPaddle.changeDirection();
+        }*/
+        topPaddle.changeVelocity(percentage);
+       /* if (deltaX > 0 && topPaddle.velocity.xVelocity < 0)
+        {
+            topPaddle.changeVelocity(-1);
+        }
+        else if(deltaX < 0 && topPaddle.velocity.xVelocity > 0)
+        {
+            topPaddle.changeVelocity(-1);
+        }*/
+    }
+
    public boolean touchEvent(MotionEvent event) {
         float xPosition1 = 0;
         float yPosition1 = 0;
